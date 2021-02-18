@@ -102,6 +102,12 @@ class AuthController extends Controller
      */
     public function login(Request $request)
     {
+        // $DATABASE_URL = parse_url('postgres://nouhudcndmnvov:39d782168d2f7998233cbe596565450afb618e1d7d3b97a4790127fe173092e6@ec2-54-225-130-212.compute-1.amazonaws.com:5432/d58ff1b7ltiudf');
+        // foreach ($DATABASE_URL as $key => $value) {
+        # code...
+        // error_log("{$key} : {$value} ");
+        // };
+
         error_log("login");
         $request->validate([
             'email' => 'required|string|email',
