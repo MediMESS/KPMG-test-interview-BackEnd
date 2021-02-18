@@ -61,7 +61,6 @@ class AuthController extends Controller
     {
 
         $admin = Auth::user();
-        error_log($admin);
         $request->validate([
             'email' => 'required|string|email|unique:users',
             'role' => [
@@ -70,6 +69,7 @@ class AuthController extends Controller
                 Rule::in(['admin', 'user']),
             ],
         ]);
+
         $password = uniqid();
         $user = new User([
             'email' => $request->email,
@@ -80,7 +80,7 @@ class AuthController extends Controller
             'password' => bcrypt($password),
         ]);
 
-        // $user->save();
+        $user->save();
         $user->password = $password;
         return response()->json([
             'user' => $user,
