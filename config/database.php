@@ -4,6 +4,14 @@ use Illuminate\Support\Str;
 
 $DATABASE_URL = parse_url('postgres://nouhudcndmnvov:39d782168d2f7998233cbe596565450afb618e1d7d3b97a4790127fe173092e6@ec2-54-225-130-212.compute-1.amazonaws.com:5432/d58ff1b7ltiudf');
 
+$db_env = "";
+if ($_SERVER["NODE_ENV"] == "production") {
+    $db_env = ltrim($DATABASE_URL["path"], "/");
+} else {
+    $db_env = env('DB_DATABASE', 'forge');
+}
+
+error_log($_SERVER, $db_env);
 return [
 
     /*
@@ -70,8 +78,7 @@ return [
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST', '127.0.0.1'),
             'port' => env('DB_PORT', '5432'),
-            // 'database' => ltrim($DATABASE_URL["path"], "/"),
-            'database' => env('DB_DATABASE', 'forge'),
+            'database' => $db_env,
             'username' => env('DB_USERNAME', 'forge'),
             'password' => env('DB_PASSWORD', ''),
             'charset' => 'utf8',
