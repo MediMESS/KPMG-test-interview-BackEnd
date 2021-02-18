@@ -21,7 +21,12 @@ class CreateUsersTable extends Migration
             $table->string('role');
             $table->string('wilaya')->nullable();
             $table->string('commune')->nullable();
+            $table->string('genre')->nullable();
             $table->string('telephone')->nullable();
+            $table->string('profile_pic')->nullable();
+            $table->string('fonction')->nullable();
+            $table->string('description')->nullable();
+            $table->string('status');
             $table->string('password');
             $table->timestamps();
         });

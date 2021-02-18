@@ -38,6 +38,7 @@ class AuthController extends Controller
             'role' => $request->role,
             'nom' => $request->nom,
             'prenom' => $request->prenom,
+            'status' => 'active',
             'password' => bcrypt($request->password)
         ]);
         $user->save();
@@ -45,6 +46,49 @@ class AuthController extends Controller
             'message' => 'Successfully created user!'
         ], 201);
     }
+
+    /**
+     * Add User by Admin
+     *
+     * @param  [string] email
+     * @param  [string] nom
+     * @param  [string] prenom
+     * @param  [string] role
+     * @return [string] notif_email
+     */
+
+    public function addUser(Request $request)
+    {
+
+        $admin = Auth::user();
+        error_log($admin);
+        $request->validate([
+            'email' => 'required|string|email|unique:users',
+            'role' => [
+                'required',
+                'string',
+                Rule::in(['admin', 'user']),
+            ],
+        ]);
+        $password = uniqid();
+        $user = new User([
+            'email' => $request->email,
+            'role' => $request->role,
+            'nom' => $request->nom,
+            'prenom' => $request->prenom,
+            'status' => $request->status,
+            'password' => bcrypt($password),
+        ]);
+
+        // $user->save();
+        $user->password = $password;
+        return response()->json([
+            'user' => $user,
+            'message' => 'Successfully created user!'
+        ], 201);
+    }
+
+
 
     /**
      * Login user and create token
@@ -74,10 +118,12 @@ class AuthController extends Controller
         if ($request->remember_me)
             $token->expires_at = Carbon::now()->addWeeks(1);
         $token->save();
-
+        unset($user['password']);
         return response()->json([
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
+            'user' => $user,
+            'ok' => 'success',
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()

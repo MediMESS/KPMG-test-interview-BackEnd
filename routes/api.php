@@ -24,6 +24,7 @@ Route::group([
     Route::group([
         'middleware' => 'auth:api'
     ], function () {
+        Route::post('/addUser', 'App\Http\Controllers\AuthController@addUser');
         Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
         Route::get('/user', 'App\Http\Controllers\AuthController@user');
     });
