@@ -11,7 +11,6 @@ if ($_SERVER["APP_ENV"] == "production") {
     $db_env = env('DB_DATABASE', 'forge');
 }
 
-error_log($_SERVER);
 error_log($db_env);
 return [
 
