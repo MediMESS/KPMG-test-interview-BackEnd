@@ -24,7 +24,6 @@ Route::group([
     Route::group([
         'middleware' => 'auth:api'
     ], function () {
-        Route::post('/addUser', 'App\Http\Controllers\AuthController@addUser');
         Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
         Route::get('/user', 'App\Http\Controllers\AuthController@user');
     });
@@ -33,14 +32,10 @@ Route::group([
 Route::group([
     'prefix' => 'users'
 ], function () {
-    Route::post('/login', 'App\Http\Controllers\AuthController@login');
-    Route::post('/signup', 'App\Http\Controllers\AuthController@signup');
-
     Route::group([
-        'middleware' => 'auth:api'
+        'middleware' =>  ['auth:api', 'check.admin']
     ], function () {
-        Route::post('/getUsers', 'App\Http\Controllers\AuthController@addUser');
-        Route::get('/logout', 'App\Http\Controllers\AuthController@logout');
-        Route::get('/user', 'App\Http\Controllers\AuthController@user');
+        Route::post('/new', 'App\Http\Controllers\AuthController@addUser');
+        Route::get('/', 'App\Http\Controllers\UsersController@getUsers');
     });
 });

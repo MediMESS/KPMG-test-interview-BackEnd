@@ -48,49 +48,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Add User by Admin
-     *
-     * @param  [string] email
-     * @param  [string] nom
-     * @param  [string] prenom
-     * @param  [string] role
-     * @return [string] notif_email
-     */
-
-    public function addUser(Request $request)
-    {
-
-        $admin = Auth::user();
-        $request->validate([
-            'email' => 'required|string|email|unique:users',
-            'role' => [
-                'required',
-                'string',
-                Rule::in(['admin', 'user']),
-            ],
-        ]);
-
-        $password = uniqid();
-        $user = new User([
-            'email' => $request->email,
-            'role' => $request->role,
-            'nom' => $request->nom,
-            'prenom' => $request->prenom,
-            'status' => $request->status,
-            'password' => bcrypt($password),
-        ]);
-
-        $user->save();
-        $user->password = $password;
-        return response()->json([
-            'user' => $user,
-            'message' => 'Successfully created user!'
-        ], 201);
-    }
-
-
-
-    /**
      * Login user and create token
      *
      * @param  [string] email
@@ -110,7 +67,8 @@ class AuthController extends Controller
         $credentials = request(['email', 'password']);
         if (!Auth::attempt($credentials))
             return response()->json([
-                'message' => 'Unauthorized'
+                'error' => true,
+                'message' => 'Erreur, veuillez vérifier vos informations'
             ], 401);
         $user = $request->user();
         $tokenResult = $user->createToken('Personal Access Token');
@@ -123,11 +81,11 @@ class AuthController extends Controller
             'access_token' => $tokenResult->accessToken,
             'token_type' => 'Bearer',
             'user' => $user,
-            'ok' => 'success',
+            'ok' => true,
             'expires_at' => Carbon::parse(
                 $tokenResult->token->expires_at
             )->toDateTimeString()
-        ]);
+        ], 200);
     }
 
     /**
@@ -139,8 +97,9 @@ class AuthController extends Controller
     {
         $request->user()->token()->revoke();
         return response()->json([
-            'message' => 'Successfully logged out'
-        ]);
+            'ok' => true,
+            'message' => 'Vous êtes déconnecté'
+        ], 200);
     }
 
     /**

@@ -2,13 +2,12 @@
 
 use Illuminate\Support\Str;
 
-$DATABASE_URL = parse_url($_SERVER['DATABASE_URL']);
 // $DATABASE_URL = parse_url('postgres://nouhudcndmnvov:39d782168d2f7998233cbe596565450afb618e1d7d3b97a4790127fe173092e6@ec2-54-225-130-212.compute-1.amazonaws.com:5432/d58ff1b7ltiudf');
 
 
 $db_env = "";
-
 if ($_SERVER['APP_ENV'] === "production") {
+    $DATABASE_URL = parse_url($_SERVER['DATABASE_URL']);
     $db_env = ltrim($DATABASE_URL["path"], "/");
 } else {
     $db_env = env('DB_DATABASE', 'forge');
