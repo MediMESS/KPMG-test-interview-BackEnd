@@ -20,13 +20,14 @@ class CheckAdmin
      */
     public function handle(Request $request, Closure $next)
     {
+        error_log("CHECK ADMIN");
         $admin = Auth::user();
         if ($admin->role !== "admin") {
             return response()->json([
                 'error' => true,
                 'message' => 'Vous n\'êtes pas autorisé à faire cette opération'
             ], 401);
-            // return $next($request);
         }
+        return $next($request);
     }
 }

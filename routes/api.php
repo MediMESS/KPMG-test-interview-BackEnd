@@ -35,7 +35,7 @@ Route::group([
     Route::group([
         'middleware' =>  ['auth:api', 'check.admin']
     ], function () {
-        Route::post('/new', 'App\Http\Controllers\AuthController@addUser');
+        Route::post('/new', 'App\Http\Controllers\UsersController@addUser');
         Route::get('/', 'App\Http\Controllers\UsersController@getUsers');
     });
 });

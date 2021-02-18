@@ -8,7 +8,7 @@ use Carbon\Carbon;
 use App\Models\User;
 use Illuminate\Validation\Rule;
 
-class UsersControllers extends Controller
+class UsersController extends Controller
 {
 
 
@@ -51,11 +51,22 @@ class UsersControllers extends Controller
             'message' => 'Successfully created user!'
         ], 201);
     }
-    //
-    public function getUser(Request $request)
-    {
-        $admin = Auth::user();
 
-        if($admin)
+    //
+    public function getUsers(Request $request)
+    {
+        $users = User::all();
+        if ($users) {
+
+            return response()->json([
+                'ok' => true,
+                'users' => $users
+            ], 200);
+        } else {
+            return response()->json([
+                'error' => true,
+                'message' => "Serveur Erreur, Veuillez réessayer"
+            ], 400);
+        }
     }
 }
