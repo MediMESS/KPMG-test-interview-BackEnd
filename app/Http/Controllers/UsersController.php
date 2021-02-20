@@ -55,12 +55,11 @@ class UsersController extends Controller
     //
     public function getUsers(Request $request)
     {
-        $users = User::all();
-        if ($users) {
-
+        $users_pagination = User::paginate($request->pagination_limit);
+        if ($users_pagination) {
             return response()->json([
                 'ok' => true,
-                'users' => $users
+                'users_pagination' => $users_pagination
             ], 200);
         } else {
             return response()->json([
