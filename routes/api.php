@@ -40,25 +40,36 @@ Route::group([
     });
 });
 
-Route::get('/customers', function (Request $request) {
-    $csvFile = Storage::get('2000_records_missing_data.csv');
-    $file_handle = preg_split('/[\n]/', $csvFile);
-    $headers = str_getcsv($file_handle[0], ";");
-    unset($file_handle[0]);
-    $line_of_text = [];
-    foreach ($file_handle as $line) {
-        $csv_line = str_getcsv($line, ";");
-        $customer = [];
-        for ($i = 0; $i < count($csv_line); $i++) {
-            $customer[$headers[$i]] = $csv_line[$i];
+Route::group([
+    'prefix' => 'customers'
+], function () {
+
+    Route::post('/fill_customers', function (Request $request) {
+        $csvFile = Storage::get('2000_records_missing_data.csv');
+        $file_handle = preg_split('/[\n]/', $csvFile);
+        $headers = str_getcsv($file_handle[0], ";");
+        unset($file_handle[0]);
+        $line_of_text = [];
+        foreach ($file_handle as $line) {
+            $csv_line = str_getcsv($line, ";");
+            $customer = [];
+            for ($i = 0; $i < count($csv_line); $i++) {
+                $customer[$headers[$i]] = $csv_line[$i];
+            }
+            $customer['status'] = "invalidated";
+            $new_customer = Customer::create($customer);
+            $line_of_text[] = $new_customer;
         }
-        $customer['status'] = "invalidated";
-        $new_customer = Customer::create($customer);
-        $line_of_text[] = $new_customer;
-    }
-    return response()->json([
-        'ok' => true,
-        "data" => $line_of_text,
-        "headers" => $headers,
-    ], 200);
+        return response()->json([
+            'ok' => true,
+            "data" => $line_of_text,
+            "headers" => $headers,
+        ], 200);
+    });
+
+    Route::group([
+        'middleware' => ['auth:api']
+    ], function () {
+        Route::get('/', 'App\Http\Controllers\CustomersController@getCustomers');
+    });
 });
