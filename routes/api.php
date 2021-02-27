@@ -2,7 +2,7 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-
+use App\Models\Customer;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -38,4 +38,27 @@ Route::group([
         Route::post('/new', 'App\Http\Controllers\UsersController@addUser');
         Route::get('/', 'App\Http\Controllers\UsersController@getUsers');
     });
+});
+
+Route::get('/customers', function (Request $request) {
+    $csvFile = Storage::get('2000_records_missing_data.csv');
+    $file_handle = preg_split('/[\n]/', $csvFile);
+    $headers = str_getcsv($file_handle[0], ";");
+    unset($file_handle[0]);
+    $line_of_text = [];
+    foreach ($file_handle as $line) {
+        $csv_line = str_getcsv($line, ";");
+        $customer = [];
+        for ($i = 0; $i < count($csv_line); $i++) {
+            $customer[$headers[$i]] = $csv_line[$i];
+        }
+        $customer['status'] = "invalidated";
+        $new_customer = Customer::create($customer);
+        $line_of_text[] = $new_customer;
+    }
+    return response()->json([
+        'ok' => true,
+        "data" => $line_of_text,
+        "headers" => $headers,
+    ], 200);
 });
