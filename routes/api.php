@@ -43,8 +43,7 @@ Route::group([
 Route::group([
     'prefix' => 'customers'
 ], function () {
-
-    Route::post('/fill_customers', function (Request $request) {
+    Route::get('/fill_customers', function (Request $request) {
         $csvFile = Storage::get('2000_records_missing_data.csv');
         $file_handle = preg_split('/[\n]/', $csvFile);
         $headers = str_getcsv($file_handle[0], ";");

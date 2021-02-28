@@ -14,7 +14,7 @@ class CreateCustomersTable extends Migration
     public function up()
     {
         Schema::create('customers', function (Blueprint $table) {
-            $table->bigIncrements('id');
+            $table->increments('id');
             $table->string('nom')->nullable();
             $table->string('prenom')->nullable();
             $table->string('fonction')->nullable();
@@ -26,6 +26,7 @@ class CreateCustomersTable extends Migration
             $table->string('telephone2')->nullable();
             $table->string('email')->unique();
             $table->string('status');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
